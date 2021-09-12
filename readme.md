@@ -16,8 +16,3 @@
  - gRPC 환경
    - [Server](grpc/examples/python/xds/server.py)
    - [Client](grpc/examples/python/xds/nlb.py)
-
-#### 참고
- - [grpc](https://github.com/grpc/grpc/tree/master/examples/python/helloworld)
-   - server: server.py
-   - client: nlb.py
