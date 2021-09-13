@@ -12,5 +12,5 @@ RUN python -m pip install grpcio-tools
 RUN pip install --no-cache-dir -r ./requirements.txt
 
 EXPOSE 50051
-CMD [ "python", "./examples/python/helloworld/greeter_server.py" ]
+CMD [ "python", "./examples/python/helloworld/server.py" ]
 

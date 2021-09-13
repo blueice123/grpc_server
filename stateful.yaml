@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: grpc-state-svc
+  namespace: kb-prd-nm-nlu
+  labels:
+    app: grpc-state
+spec:
+  ports:
+  - port: 50051
+    name: grpc-server
+  clusterIP: None
+  selector:
+    app: grpc-state
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: grpc-state
+  namespace: kb-prd-nm-nlu
+spec:
+  selector:
+    matchLabels:
+      app: grpc-state
+  serviceName: "grpc-state"
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: grpc-state
+    spec:
+      containers:
+      - name: grpc-state
+        image: 239234376445.dkr.ecr.ap-northeast-2.amazonaws.com/grpc-server:server-2-v2
+        ports:
+        - containerPort: 50051
+          name: grpc-server

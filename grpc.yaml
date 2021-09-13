@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: grpc-test-svr
+  namespace: kb-prd-nm-nlu
+  annotations:
+    ## 공통 설정
+    service.beta.kubernetes.io/aws-load-balancer-type: external
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-healthy-threshold: "2"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-unhealthy-threshold: "2"
+    ## 내외부 설정
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing  ## Public network 
+    # service.beta.kubernetes.io/aws-load-balancer-scheme: internal  ## Private network
+    ## 타겟그룹에 대한 속성 설정
+    service.beta.kubernetes.io/aws-load-balancer-target-group-attributes: "deregistration_delay.timeout_seconds=5, stickiness.enabled=true,stickiness.type=source_ip, deregistration_delay.connection_termination.enabled=true" # supported values ["deregistration_delay.timeout_seconds=10, stickiness.enabled=true,stickiness.type=source_ip, proxy_protocol_v2.enabled=true, deregistration_delay.connection_termination.enabled=true, preserve_client_ip.enabled=true"]
+spec:
+  ports:
+    - port: 50051
+      name: grpc-50051
+      targetPort: 50051
+      protocol: TCP #supported values: [UDP, TCP, TCP_UDP, HTTP, HTTPS]
+  type: LoadBalancer
+  selector:
+    app: kb-prd-ng-nlu
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grpc-server1-deployment
+  namespace: kb-prd-nm-nlu
+  labels:
+    app: kb-prd-ng-nlu
+    server: grpc-server1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: kb-prd-ng-nlu
+  template:
+    metadata:
+      labels:
+        app: kb-prd-ng-nlu
+    spec:
+      containers:
+      - name: server-1
+        image: 239234376445.dkr.ecr.ap-northeast-2.amazonaws.com/grpc-server:server-2-v2
+        ports:
+        - containerPort: 50051
+      terminationGracePeriodSeconds: 5
