@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: grpc-state-dns
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: state-svc.awskrug-syha.com
+  labels:
+    app: grpc-state-dns
+spec:
+  ports:
+  - port: 50051
+    name: grpc-state-dns
+  clusterIP: None
+  selector:
+    app: grpc-state-dns
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: grpc-state-dns
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: state.awskrug-syha.com
+spec:
+  selector:
+    matchLabels:
+      app: grpc-state-dns
+  serviceName: "grpc-state-dns"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: grpc-state-dns
+    spec:
+      containers:
+      - name: grpc-state-dns
+        image: 239234376445.dkr.ecr.ap-northeast-2.amazonaws.com/grpc-server:server-2-v2
+        ports:
+        - containerPort: 50051
+          name: grpc-state-dns
