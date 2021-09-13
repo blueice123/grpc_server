@@ -3,7 +3,8 @@ kind: Service
 metadata:
   name: grpc-state-dns
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: state-svc.awskrug-syha.com
+    external-dns.alpha.kubernetes.io/hostname: grpc-state-dns.test.com
+    external-dns.alpha.kubernetes.io/ttl: "5"
   labels:
     app: grpc-state-dns
 spec:
@@ -18,14 +19,12 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: grpc-state-dns
-  annotations:
-    external-dns.alpha.kubernetes.io/hostname: state.awskrug-syha.com
 spec:
   selector:
     matchLabels:
       app: grpc-state-dns
   serviceName: "grpc-state-dns"
-  replicas: 1
+  replicas: 6
   template:
     metadata:
       labels:
