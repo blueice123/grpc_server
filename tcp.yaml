@@ -1,58 +1,36 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: Namespace
 metadata:
-  name: tcptest1
-  namespace: kb-prd-nm-nlu
-spec:
-  selector:
-    matchLabels:
-      app: jt-tcp
-  replicas: 2
-  strategy:
-    type: RollingUpdate
-  minReadySeconds: 10
-  template:
-    metadata:
-      labels:
-        app: jt-tcp
-    spec:
-      containers:
-      - name: container
-        image: taeknical/tcptest
-        ports:
-        - containerPort: 80
-      terminationGracePeriodSeconds: 5
+  name: test-20210914
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: tcptest2
-  namespace: kb-prd-nm-nlu
+  name: tcp-server
+  namespace: test-20210914
 spec:
   selector:
     matchLabels:
-      app: jt-tcp
-  replicas: 2
-  strategy:
-    type: RollingUpdate
-  minReadySeconds: 10
+      app: tcp-server
+  serviceName: "tcp-server"
+  replicas: 4
   template:
     metadata:
       labels:
-        app: jt-tcp
+        app: tcp-server
     spec:
       containers:
-      - name: container
-        image: taeknical/tcptest2
+      - name: tcp-server
+        image: 239234376445.dkr.ecr.ap-northeast-2.amazonaws.com/tcp-server:latest
         ports:
         - containerPort: 80
-      terminationGracePeriodSeconds: 5
+          name: tcp-server
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: nginx-nlb2
-  namespace: kb-prd-nm-nlu
+  name: tcp-server-svc
+  namespace: test-20210914
   annotations:
     ## 공통 설정
     service.beta.kubernetes.io/aws-load-balancer-type: external
@@ -64,7 +42,7 @@ metadata:
     service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing  ## Public network 
     # service.beta.kubernetes.io/aws-load-balancer-scheme: internal  ## Private network
     ## 타겟그룹에 대한 속성 설정
-    service.beta.kubernetes.io/aws-load-balancer-target-group-attributes: "deregistration_delay.timeout_seconds=0, stickiness.enabled=true,stickiness.type=source_ip, deregistration_delay.connection_termination.enabled=true" # supported values ["deregistration_delay.timeout_seconds=10, stickiness.enabled=true,stickiness.type=source_ip, proxy_protocol_v2.enabled=true, deregistration_delay.connection_termination.enabled=true, preserve_client_ip.enabled=true"]
+    service.beta.kubernetes.io/aws-load-balancer-target-group-attributes: "deregistration_delay.timeout_seconds=5, stickiness.enabled=true,stickiness.type=source_ip, deregistration_delay.connection_termination.enabled=true" # supported values ["deregistration_delay.timeout_seconds=10, stickiness.enabled=true,stickiness.type=source_ip, proxy_protocol_v2.enabled=true, deregistration_delay.connection_termination.enabled=true, preserve_client_ip.enabled=true"]
 spec:
   ports:
     - port: 80
@@ -73,4 +51,20 @@ spec:
       protocol: TCP #supported values: [UDP, TCP, TCP_UDP, HTTP, HTTPS]
   type: LoadBalancer
   selector:
-    app: jt-tcp
+    app: tcp-server
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tcp-server-svc-for-dns
+  namespace: test-20210914
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: tcp.awskrug-syha.com
+    external-dns.alpha.kubernetes.io/ttl: "5"
+spec:
+  ports:
+  - port: 80
+    name: tcp-80
+  clusterIP: None
+  selector:
+    app: tcp-server

@@ -1,7 +1,4 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: external-dns
+
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -70,10 +67,10 @@ spec:
         - --source=service
         - --source=ingress
         # will make ExternalDNS see only the hosted zones matching provided domain, omit to process all available hosted zones
-        - --domain-filter=test.com
+        - --domain-filter=awskrug-syha.com
         - --provider=aws
         - --policy=sync #upsert-only # would prevent ExternalDNS from deleting any records, omit to enable full synchronization
-        - --aws-zone-type=private # only look at public hosted zones (valid values are public, private or no value for both) - --registry=txt
-        - --txt-owner-id=/hostedzone/Z09100711RI0H99EDETL6
+        - --aws-zone-type=public # only look at public hosted zones (valid values are public, private or no value for both) - --registry=txt
+        - --txt-owner-id=/hostedzone/Z03192911RP17K4KQ4RV4
       securityContext:
         fsGroup: 65534 # For ExternalDNS to be able to read Kubernetes and AWS token files

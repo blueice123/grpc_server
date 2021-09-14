@@ -12,9 +12,11 @@
 #### 1. 테스트 환경:
  - EKS 1.21
  - aws load balancer controller 2.2.4
- - NLB (세부 설정 [참고](k8s.yaml))
+ - NLB
+   - [grpc](grpc.yaml)
+   - [tcp](tcp.yaml)
  - TCP 환경
    - Apache pod 
  - gRPC 환경
-   - [Server](grpc/examples/python/xds/server.py)
-   - [Client](grpc/examples/python/xds/nlb.py)
+   - [Server](grpc/examples/python/helloworld/server.py)
+   - [Client](grpc/examples/python/helloworld/nlb.py)

@@ -27,7 +27,7 @@ def run():
     # used in circumstances in which the with statement does not fit the needs
     # of the code.
     # with grpc.insecure_channel('localhost:50051') as channel:
-    with grpc.insecure_channel('k8s-kbprdnmn-grpctest-8b82f88c1c-845491adcfb04306.elb.ap-northeast-2.amazonaws.com:50051') as channel:
+    with grpc.insecure_channel('k8s-test2021-grpcserv-4426728cae-827d9f03e4451ca9.elb.ap-northeast-2.amazonaws.com:50051') as channel:
         stub = helloworld_pb2_grpc.GreeterStub(channel)
         response = stub.SayHello(helloworld_pb2.HelloRequest(name='you'))
     print("Greeter client received: " + response.message)
