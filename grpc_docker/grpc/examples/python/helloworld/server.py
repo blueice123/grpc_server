@@ -25,7 +25,7 @@ import socket
 class Greeter(helloworld_pb2_grpc.GreeterServicer):
 
     def SayHello(self, request, context):
-        return helloworld_pb2.HelloReply(message='%s!' % socket.gethostname())
+        return helloworld_pb2.HelloReply(message='v2 %s!' % socket.gethostname())
 
 
 def serve():

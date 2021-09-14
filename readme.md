@@ -16,7 +16,16 @@
    - [grpc](grpc.yaml)
    - [tcp](tcp.yaml)
  - TCP 환경
-   - Apache pod 
+   - [Apache pod](tcp_docker/)
  - gRPC 환경
-   - [Server](grpc/examples/python/helloworld/server.py)
-   - [Client](grpc/examples/python/helloworld/nlb.py)
+   - [Server](grpc_docker/grpc/examples/python/helloworld/server.py)
+   - [Client](grpc_docker/grpc/examples/python/helloworld/nlb.py)
+
+
+#### 2. 현재 구조에서의 NLB특징
+ - Security group으로 방화벽 제어가 안됨.
+ - pod가 죽을 때 session draining이 정상적으로 처리되지 않음 
+
+
+#### 만약 statefulset으로 오브젝트를 정의할 경우 단점
+ - Rolling 배포 전략과 partition을 통한 Canary 배포 전략만 구사할 수 있음 
