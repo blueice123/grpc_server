@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: grpc-server
+  namespace: test-20210914
+spec:
+  selector:
+    matchLabels:
+      app: grpc-server
+  serviceName: "grpc-server"
+  replicas: 4
+  template:
+    metadata:
+      labels:
+        app: grpc-server
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: grpc-server
+        image: 239234376445.dkr.ecr.ap-northeast-2.amazonaws.com/grpc-server:v2
+        ports:
+        - containerPort: 50051
+          name: grpc-server
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grpc-server-svr
+  namespace: test-20210914
+  annotations:
+    ## 공통 설정
+    service.beta.kubernetes.io/aws-load-balancer-type: external
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-healthy-threshold: "2"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-unhealthy-threshold: "2"
+    ## 내외부 설정
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing  ## Public network 
+    # service.beta.kubernetes.io/aws-load-balancer-scheme: internal  ## Private network
+    ## 타겟그룹에 대한 속성 설정
+    service.beta.kubernetes.io/aws-load-balancer-target-group-attributes: "deregistration_delay.timeout_seconds=5, stickiness.enabled=true,stickiness.type=source_ip, deregistration_delay.connection_termination.enabled=true" # supported values ["deregistration_delay.timeout_seconds=10, stickiness.enabled=true,stickiness.type=source_ip, proxy_protocol_v2.enabled=true, deregistration_delay.connection_termination.enabled=true, preserve_client_ip.enabled=true"]
+spec:
+  ports:
+    - port: 50051
+      name: grpc-50051
+      targetPort: 50051
+      protocol: TCP #supported values: [UDP, TCP, TCP_UDP, HTTP, HTTPS]
+  type: LoadBalancer
+  selector:
+    app: grpc-server
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grpc-server-svc-for-dns
+  namespace: test-20210914
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: grpc.awskrug-syha.com
+    external-dns.alpha.kubernetes.io/ttl: "5"
+spec:
+  ports:
+  - port: 50051
+    name: grpc-50051
+  clusterIP: None
+  selector:
+    app: grpc-server
