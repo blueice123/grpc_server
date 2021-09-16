@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: tcp-server
-        image: 239234376445.dkr.ecr.ap-northeast-2.amazonaws.com/tcp-server:v1
+        image: 239234376445.dkr.ecr.ap-northeast-2.amazonaws.com/tcp-server:v2
         ports:
         - containerPort: 80
       terminationGracePeriodSeconds: 300
