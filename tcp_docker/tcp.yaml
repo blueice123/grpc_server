@@ -4,7 +4,7 @@ metadata:
   name: test-20210914
 ---
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: tcp-server
   namespace: test-20210914
@@ -12,20 +12,21 @@ spec:
   selector:
     matchLabels:
       app: tcp-server
-  serviceName: "tcp-server"
-  replicas: 4
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+  minReadySeconds: 10
   template:
     metadata:
       labels:
         app: tcp-server
     spec:
-      terminationGracePeriodSeconds: 2
       containers:
-      - name: tcp-server
-        image: 239234376445.dkr.ecr.ap-northeast-2.amazonaws.com/tcp-server:v2
+      - name: container
+        image: 239234376445.dkr.ecr.ap-northeast-2.amazonaws.com/tcp-server:v1
         ports:
         - containerPort: 80
-          name: tcp-server
+      terminationGracePeriodSeconds: 0
 ---
 apiVersion: v1
 kind: Service
@@ -51,21 +52,5 @@ spec:
       targetPort: 80
       protocol: TCP #supported values: [UDP, TCP, TCP_UDP, HTTP, HTTPS]
   type: LoadBalancer
-  selector:
-    app: tcp-server
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: tcp-server-svc-for-dns
-  namespace: test-20210914
-  annotations:
-    external-dns.alpha.kubernetes.io/hostname: tcp.awskrug-syha.com
-    external-dns.alpha.kubernetes.io/ttl: "5"
-spec:
-  ports:
-  - port: 80
-    name: tcp-80
-  clusterIP: None
   selector:
     app: tcp-server
