@@ -19,7 +19,7 @@ spec:
       labels:
         app: tcp-server
     spec:
-      terminationGracePeriodSeconds: 5
+      terminationGracePeriodSeconds: 2
       containers:
       - name: tcp-server
         image: 239234376445.dkr.ecr.ap-northeast-2.amazonaws.com/tcp-server:v2
