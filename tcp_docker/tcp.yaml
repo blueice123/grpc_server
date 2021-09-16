@@ -22,7 +22,7 @@ spec:
         app: tcp-server
     spec:
       containers:
-      - name: container
+      - name: tcp-server
         image: 239234376445.dkr.ecr.ap-northeast-2.amazonaws.com/tcp-server:v1
         ports:
         - containerPort: 80
