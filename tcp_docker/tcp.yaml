@@ -16,7 +16,7 @@ spec:
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxSurge: 0        # how many pods we can add at a time
+      maxSurge: 1        # how many pods we can add at a time
       maxUnavailable: 1  # maxUnavailable define how many pods can be unavailable during the rolling update    
   template:
     metadata:
@@ -28,7 +28,7 @@ spec:
         image: 239234376445.dkr.ecr.ap-northeast-2.amazonaws.com/tcp-server:v1
         ports:
         - containerPort: 80
-      terminationGracePeriodSeconds: 300
+      terminationGracePeriodSeconds: 30
 ---
 apiVersion: v1
 kind: Service
