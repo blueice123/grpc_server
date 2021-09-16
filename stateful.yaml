@@ -1,35 +1,35 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: grpc-state
+  name: tcp-state
   labels:
-    app: grpc-state
+    app: tcp-state
 spec:
   ports:
   - port: 50051
-    name: grpc-state
+    name: tcp-state
   clusterIP: None
   selector:
-    app: grpc-state
+    app: tcp-state
 ---
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
-  name: grpc-state
+  name: tcp-state
 spec:
   selector:
     matchLabels:
-      app: grpc-state
-  serviceName: "grpc-state"
+      app: tcp-state
+  serviceName: "tcp-state"
   replicas: 1
   template:
     metadata:
       labels:
-        app: grpc-state
+        app: tcp-state
     spec:
       containers:
-      - name: grpc-state
+      - name: tcp-state
         image: 239234376445.dkr.ecr.ap-northeast-2.amazonaws.com/grpc-server:server-2-v2
         ports:
         - containerPort: 50051
-          name: grpc-state
+          name: tcp-state
