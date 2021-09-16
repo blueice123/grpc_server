@@ -15,7 +15,12 @@ spec:
   replicas: 2
   strategy:
     type: RollingUpdate
-  minReadySeconds: 10
+    rollingParams:
+      updatePeriodSeconds: 60
+      intervalSeconds: 10 
+      timeoutSeconds: 60 
+      maxSurge: "0%" 
+      maxUnavailable: "50%"     
   template:
     metadata:
       labels:
