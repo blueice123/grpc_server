@@ -15,12 +15,9 @@ spec:
   replicas: 2
   strategy:
     type: RollingUpdate
-    rollingParams:
-      updatePeriodSeconds: 60
-      intervalSeconds: 10 
-      timeoutSeconds: 60 
-      maxSurge: "0%" 
-      maxUnavailable: "50%"     
+    rollingUpdate:
+      maxSurge: 0        # how many pods we can add at a time
+      maxUnavailable: 1  # maxUnavailable define how many pods can be unavailable during the rolling update    
   template:
     metadata:
       labels:
@@ -28,7 +25,7 @@ spec:
     spec:
       containers:
       - name: tcp-server
-        image: 239234376445.dkr.ecr.ap-northeast-2.amazonaws.com/tcp-server:v2
+        image: 239234376445.dkr.ecr.ap-northeast-2.amazonaws.com/tcp-server:v1
         ports:
         - containerPort: 80
       terminationGracePeriodSeconds: 300
