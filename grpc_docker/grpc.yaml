@@ -38,7 +38,7 @@ metadata:
     service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing  ## Public network 
     # service.beta.kubernetes.io/aws-load-balancer-scheme: internal  ## Private network
     ## 타겟그룹에 대한 속성 설정
-    service.beta.kubernetes.io/aws-load-balancer-target-group-attributes: "deregistration_delay.timeout_seconds=5, stickiness.enabled=true,stickiness.type=source_ip, deregistration_delay.connection_termination.enabled=true" # supported values ["deregistration_delay.timeout_seconds=10, stickiness.enabled=true,stickiness.type=source_ip, proxy_protocol_v2.enabled=true, deregistration_delay.connection_termination.enabled=true, preserve_client_ip.enabled=true"]
+    service.beta.kubernetes.io/aws-load-balancer-target-group-attributes: "deregistration_delay.timeout_seconds=5, deregistration_delay.connection_termination.enabled=true" # supported values ["deregistration_delay.timeout_seconds=10, stickiness.enabled=true,stickiness.type=source_ip, proxy_protocol_v2.enabled=true, deregistration_delay.connection_termination.enabled=true, preserve_client_ip.enabled=true", stickiness.enabled=true,stickiness.type=source_ip]
 spec:
   ports:
     - port: 50051
